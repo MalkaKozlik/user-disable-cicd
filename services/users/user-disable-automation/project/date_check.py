@@ -25,4 +25,3 @@ def disable_user_by_expiration(date, access_token, user_id, attribute_name):
 
 def convert_datetime_to_date(date):
     return datetime.date(date.year, date.month, date.day)
-
