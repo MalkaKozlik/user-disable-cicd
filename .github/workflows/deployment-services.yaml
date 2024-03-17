@@ -152,6 +152,12 @@ jobs:
           labels: ${{ steps.docker_meta.outputs.labels }}
           file: ./${{ matrix.directory }}/Dockerfile
 
+      - name: 🔄 downcase REPO
+        uses: ASzc/change-string-case-action@v1
+        id: downcase
+        with:
+          string: ${{ github.repository }}
+
 
       - name: Change to lowercase
         run: |
