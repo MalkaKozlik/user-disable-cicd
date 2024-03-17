@@ -152,12 +152,18 @@ jobs:
           labels: ${{ steps.docker_meta.outputs.labels }}
           file: ./${{ matrix.directory }}/Dockerfile
 
+
+      - name: Change to lowercase
+        run: |
+          REPO=${{ steps.downcase.outputs.lowercase }}
+          echo "REPO=$REPO" >> "$GITHUB_ENV"
+
       - name: echo 
-        run: echo "ghcr.io/${{ github.repository }}/${{ env.LAST_LEVEL }}:${{ env.TAG }}"
+        run: echo "ghcr.io/${{ env.REPO }}/${{ env.LAST_LEVEL }}:${{ env.TAG }}"
 
       - name: 🚀 Deploy to Azure Functions
         id: deploy-to-functions
         uses: Azure/functions-container-action@v1
         with:
           app-name: ${{ env.LAST_LEVEL }}
-          image: "ghcr.io/${{ github.repository }}/${{ env.LAST_LEVEL }}:${{ env.TAG }}"
+          image: "ghcr.io/${{ env.REPO }}/${{ env.LAST_LEVEL }}:${{ env.TAG }}"
