@@ -109,12 +109,21 @@ jobs:
         run : az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID  
  
 
+      # - name: 🧰 Check and copy necessary files
+      #   run: |
+      #     REQUIRED_FILES=(".funcignore" "host.json" "Dockerfile" ".dockerignore" )
+      #     for file in "${REQUIRED_FILES[@]}"; do
+      #       cp "./${{ env.WORKING_DIR }}/${file}" "${{ matrix.directory }}/"
+      #     done
+
+      
       - name: 🧰 Check and copy necessary files
         run: |
           REQUIRED_FILES=(".funcignore" "host.json" "Dockerfile" ".dockerignore" )
           for file in "${REQUIRED_FILES[@]}"; do
-            cp "./${{ env.WORKING_DIR }}/${file}" "${{ matrix.directory }}/"
+            cp "./${file}" "${{ matrix.directory }}/"
           done
+
 
       - name: 🔄 Extract Last Directory Level
         id: get-last-level
