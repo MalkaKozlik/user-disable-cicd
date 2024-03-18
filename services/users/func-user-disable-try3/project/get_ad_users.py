@@ -1,4 +1,4 @@
-# import requests
+import requests
 
 
 def retrieving_users_by_department_name(access_token, department, expiration_date):
@@ -24,7 +24,7 @@ def get_users(access_token, select, filter, top):
             "ConsistencyLevel": "eventual",
             "Content-Type": "application/json",
         }
-        # response = requests.get(url, headers=headers)
-        # return response.json()
+        response = requests.get(url, headers=headers)
+        return response.json()
     except Exception:
         raise Exception("Failed to get users")
