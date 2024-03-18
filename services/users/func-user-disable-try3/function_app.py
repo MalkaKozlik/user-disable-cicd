@@ -14,8 +14,8 @@ def test_function(req: func.HttpRequest) -> func.HttpResponse:
     try:
         inspection_process_management()
     except Exception:
-        logging.info("Exception!!!!!!!!!!!!!!!!!!!")
+        logging.info("Exception")
     return func.HttpResponse(
-        "wow!!!!!!!!!!!!!!!!",
+        "finish",
         status_code=200
     )
