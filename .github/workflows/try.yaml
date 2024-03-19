@@ -1,4 +1,5 @@
-name: 🚀 Build and deploy to Azure-Function-App
+name: try
+
 
 on:
   workflow_dispatch:
