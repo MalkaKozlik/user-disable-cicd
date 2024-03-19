@@ -10,11 +10,15 @@ on:
         type: choice
         description: deploy directories to function apps
         options:
-          - only_changed_directories
           - all
+          - only_changed_directories
+          
 
 env:
   WORKING_DIR: services
+  ARM_TENANT_ID: ${{secrets.AZURE_TENANT_ID}}
+  ARM_CLIENT_ID: ${{secrets.AZURE_CLIENT_ID}}
+  ARM_CLIENT_SECRET: ${{secrets.AZURE_CLIENT_SECRET}}
 
 jobs:
   setup:
@@ -41,7 +45,7 @@ jobs:
         with:  
           token: "${{ secrets.GITHUB_TOKEN }}"
           branch: "main"
-          workflow: "🚀 Build and deploy to Azure-Function-App"
+          workflow: "${{ github.workflow }}"
         if: inputs.deploy == 'only_changed_directories'
 
       - name: Get changed directories
@@ -95,22 +99,38 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🔑 Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # - name: 🔑 Login to Azure
+      #   uses: azure/login@v1
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: 🔑 Login to Azure
+        id : az-login
+        run : az login --service-principal -u $ARM_CLIENT_ID -p $ARM_CLIENT_SECRET --tenant $ARM_TENANT_ID  
+ 
+
+      # - name: 🧰 Check and copy necessary files
+      #   run: |
+      #     REQUIRED_FILES=(".funcignore" "host.json" "Dockerfile" ".dockerignore" )
+      #     for file in "${REQUIRED_FILES[@]}"; do
+      #       cp "./${{ env.WORKING_DIR }}/${file}" "${{ matrix.directory }}/"
+      #     done
+
+      
       - name: 🧰 Check and copy necessary files
         run: |
           REQUIRED_FILES=(".funcignore" "host.json" "Dockerfile" ".dockerignore" )
           for file in "${REQUIRED_FILES[@]}"; do
-            cp "./${{ env.WORKING_DIR }}/${file}" "${{ matrix.directory }}/"
+            cp "./${file}" "${{ matrix.directory }}/"
           done
+
+
       - name: 🔄 Extract Last Directory Level
         id: get-last-level
         run: |
           LAST_LEVEL=$(echo ${{ matrix.directory }} | xargs -n 1 basename)
           echo "LAST_LEVEL=$LAST_LEVEL" >> "$GITHUB_ENV"
+
       - name: 🐳 Docker metadata
         id: docker_meta
         uses: docker/metadata-action@v5
@@ -118,9 +138,10 @@ jobs:
           images: ghcr.io/${{ github.repository }}/${{ env.LAST_LEVEL }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=semver,pattern=v{{major}}.{{minor}}.{{patch}},value=${{ env.TAG }}
-            type=semver,pattern=v{{major}}.{{minor}},value=${{ env.TAG }}
-            type=semver,pattern=v{{major}},value=${{ env.TAG }}
+            type=semver,pattern={{major}}.{{minor}}.{{patch}},value=${{ env.TAG }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.TAG }}
+            type=semver,pattern={{major}},value=${{ env.TAG }}
+
       - name: 🏗️ Build and push container image to registry
         id: build-and-push
         uses: docker/build-push-action@v5
@@ -131,9 +152,25 @@ jobs:
           labels: ${{ steps.docker_meta.outputs.labels }}
           file: ./${{ matrix.directory }}/Dockerfile
 
+
+      - name: 🔄 downcase REPO
+        uses: ASzc/change-string-case-action@v1
+        id: downcase
+        with:
+          string: ${{ github.repository }}
+
+
+      - name: Change to lowercase
+        run: |
+          REPO=${{ steps.downcase.outputs.lowercase }}
+          echo "REPO=$REPO" >> "$GITHUB_ENV"
+
+      - name: echo 
+        run: echo "ghcr.io/${{ env.REPO }}/${{ env.LAST_LEVEL }}:${{ env.TAG }}"
+
       - name: 🚀 Deploy to Azure Functions
         id: deploy-to-functions
         uses: Azure/functions-container-action@v1
         with:
           app-name: ${{ env.LAST_LEVEL }}
-          image: "ghcr.io/${{ github.repository }}/${{ env.LAST_LEVEL }}:${{ env.TAG }}"
+          image: "ghcr.io/${{ env.REPO }}/${{ env.LAST_LEVEL }}:${{ env.TAG }}"
