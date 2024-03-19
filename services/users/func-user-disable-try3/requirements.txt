@@ -1,28 +1,7 @@
-# python-dotenv==1.0.0
-# pytest
-# black
-# azure-keyvault-secrets
-# azure-identity
-# requests
-# pytz
-
-
-azure-cli
-azure-identity
-azure-keyvault-secrets
-azure-mgmt-monitor
-azure-mgmt-consumption
-azure-mgmt-storage
-azure-mgmt-resource
-azure-storage-blob
+python-dotenv==1.0.0
 pytest
-pytest_mock
 black
-ruff
-python-dateutil
-pytest-cov
-python-dotenv
-pytz
-azure-functions
+azure-keyvault-secrets
+azure-identity
 requests
-openpyxl
+pytz
