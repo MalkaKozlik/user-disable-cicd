@@ -3,7 +3,7 @@ import json
 import pytest
 import requests
 
-from project.update_user_attribute import update_user_attribute, remove_user_attribute
+from project.user_attribute import update_user_attribute, remove_user_attribute
 
 
 class response:
@@ -26,7 +26,7 @@ def test_update_user_attribute_called_patch(mock_patch):
     )
 
 
-@patch("project.update_user_attribute.requests.patch", Mock(return_value=response(403)))
+@patch("project.user_attribute.requests.patch", Mock(return_value=response(403)))
 def test_update_user_attribute_raise_exception():
     with pytest.raises(Exception) as exception:
         update_user_attribute(
@@ -35,7 +35,7 @@ def test_update_user_attribute_raise_exception():
     assert "The status code is: 403" in str(exception.value)
 
 
-@patch("project.update_user_attribute.update_user_attribute")
+@patch("project.user_attribute.update_user_attribute")
 def test_remove_user_attribute(update_user_attribute):
     remove_user_attribute("access_token", "user_id", "attribute_name")
     update_user_attribute.assert_called_once_with(

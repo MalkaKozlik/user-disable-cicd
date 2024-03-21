@@ -1,14 +1,15 @@
 azure-cli
 azure-identity
-azure-keyvault-secrets
 azure-mgmt-monitor
 azure-mgmt-consumption
 azure-mgmt-storage
-azure-mgmt-resource
+azure-mgmt-subscription
+azure-mgmt-resource 
 azure-storage-blob
+azure-data-tables
+azure-core
 pytest
 pytest_mock
-black
 ruff
 python-dateutil
 pytest-cov
@@ -17,3 +18,5 @@ pytz
 azure-functions
 requests
 openpyxl
+azure-keyvault-secrets
+pandas==2.1.1
