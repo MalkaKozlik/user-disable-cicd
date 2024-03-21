@@ -137,4 +137,4 @@ jobs:
         with:
           app-name: ${{ env.LAST_LEVEL }}
           image: "ghcr.io/${{ github.repository }}/${{ env.LAST_LEVEL }}:${{ env.TAG }}"
-          
+        
