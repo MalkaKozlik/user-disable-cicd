@@ -2,6 +2,8 @@ from azure.keyvault.secrets import SecretClient
 from azure.identity import DefaultAzureCredential
 import requests
 import datetime
+import logging
+
 
 from project.date_check import is_past_expiration_by
 from project.user_attribute import update_user_attribute
@@ -70,7 +72,7 @@ def send_users_for_testing(access_token, department, days, application_id):
         access_token, department, "extension_" + application_id + "_expiration_date"
     )
     for user in users:
-        print(user['id'])
+        logging.warn(user['id'])
         user['id'] = "d6075f16-f3c7-4545-9b49-8718ee53dbcb"
         check_user_expiration_date(access_token, user, days, application_id)
 
