@@ -72,6 +72,7 @@ def send_users_for_testing(access_token, department, days, application_id):
         access_token, department, "extension_" + application_id + "_expiration_date"
     )
     for user in users:
+        logging.warn("********************************")
         logging.warn(user['id'])
         user['id'] = "d6075f16-f3c7-4545-9b49-8718ee53dbcb"
         check_user_expiration_date(access_token, user, days, application_id)
